@@ -7,9 +7,12 @@ def add_tag(tag_name, url, site_name):
     with DBAccess.driver.session() as session:
         session.write_transaction(DBAccess.add_tag,tag_name,url, site_name)
 
+def search_tags(tags):
+    with DBAccess.driver.session() as session:
+        session.write_transaction(DBAccess.search_tag,tags)
+
 if sys.argv[1].upper() == "N":
     print("Criar novo")
-    # print(f"Arguments count: {len(sys.argv)}")
     i=3
     while i<len(sys.argv):
         print(sys.argv[i].upper())
@@ -19,9 +22,4 @@ if sys.argv[1].upper() == "N":
 
 elif sys.argv[1].upper() == "S":
     print("Pesquisa")
-
-
-
-
-# add_tag("x", "http://google.com", "Google")
-# add_tag("y","http://google.com", "Google")
+    search_tags(sys.argv[2:])

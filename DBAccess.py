@@ -1,12 +1,26 @@
 from neo4j import GraphDatabase
 
-driver = GraphDatabase.driver("neo4j://localhost:7687", auth=("neo4j", "bookgraph"))
+driver = GraphDatabase.driver("neo4j://localhost:7687", auth=("neo4j", "BookGraph"))
 
 def add_tag(tx, tag, url, site):
     tx.run( "MERGE (u:Url {name: $Site, url: $Url})"
             "MERGE (t:Tag {name: $Tag}) "
             "MERGE (u)-[:IDENTIFIES]-(t)", Site=site, Tag=tag, Url=url)
 
+def search_tag(tx, tags):
+    query = "MATCH (u:Url)-[:IDENTIFIES]->(t:Tag) where ("
+    for t in range(len(tags)):
+        if t>0:
+            query += " or "
+        query += " t.name = '" + tags[t].upper() + "'"
+    query += ") return distinct(u.url)"
+    for record in tx.run(query):
+        print(record)
+
+    
+    
+    # t.name = "SEARCH" or t.name="ENGINE") return u
+    # tx.run(query)
 
 # def add_friend(tx, name, friend_name):
 #     tx.run("MERGE (a:Person {name: $name}) "
